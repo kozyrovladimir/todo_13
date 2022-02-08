@@ -38,12 +38,6 @@ export const CreateTodolist = () => {
 export const DeleteTodolist = () => {
     const todolistID = '3223364a-e08c-4c98-95ce-1ba38befaf20';
     const [state, setState] = useState<any>(null)
-    const settings = {
-        withCredentials: true,
-        headers: {
-            'API-KEY': '3223364a-e08c-4c98-95ce-1ba38befaf20'
-        }
-    }
     useEffect(() => {
         todolistAPI.deleteTodolist(todolistID)
             .then((res) => {
@@ -54,22 +48,27 @@ export const DeleteTodolist = () => {
     return <div> {JSON.stringify(state)}</div>
 }
 export const UpdateTodolistTitle = () => {
-    const [state, setState] = useState<any>(null)
-    const settings = {
-        withCredentials: true,
-        headers: {
-            'API-KEY': '3223364a-e08c-4c98-95ce-1ba38befaf20'
-        }
+    const [inputTitleState, setInputTitleState] = useState<string>('');
+    const [inputIDState, setInputIDState] = useState<string>('');
+    const [state, setState] = useState<any>(null);
+    function onChangeTitleHeandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setInputTitleState(event.currentTarget.value);
     }
-    const title = 'New name'
-    const todolistID = '3223364a-e08c-4c98-95ce-1ba38befaf20';
-    useEffect(() => {
-        todolistAPI.updateTodolist(todolistID, title)
+    function onChangeIDHeandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setInputIDState(event.currentTarget.value);
+    }
+    function onClickHeandler() {
+        todolistAPI.updateTodolist(inputIDState, inputTitleState)
             .then((res) => {
-                setState(res.data)
+                console.log(res);
             })
-    }, [])
+    }
 
-    return <div> {JSON.stringify(state)}</div>
+    return <div>  
+                <span>{JSON.stringify(useState)}</span>
+                <input type="text" value={inputTitleState} onChange={onChangeTitleHeandler} placeholder = "Write new title"/>
+                <input type="text" value={inputIDState} onChange={onChangeIDHeandler} placeholder = "Write id"/>
+                <button onClick={onClickHeandler}>Update title</button>
+            </div>
 }
 
