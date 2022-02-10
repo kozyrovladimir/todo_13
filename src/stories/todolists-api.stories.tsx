@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {todolistAPI} from "../api/todolist-api";
+import {TaskType, todolistAPI} from "../api/todolist-api";
 
 export default {
     title: 'API'
@@ -69,6 +69,58 @@ export const UpdateTodolistTitle = () => {
                 <input type="text" value={inputTitleState} onChange={onChangeTitleHeandler} placeholder = "Write new title"/>
                 <input type="text" value={inputIDState} onChange={onChangeIDHeandler} placeholder = "Write id"/>
                 <button onClick={onClickHeandler}>Update title</button>
+            </div>
+}
+
+export const GetTasks = () => {
+    const [inputIDState, setInputIDState] = useState<string>('');
+    const [tasksState,  setTasksState] = useState<Array<TaskType> | null>(null);
+    function onChangeIDHeandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setInputIDState(event.currentTarget.value);
+    }
+    function onClickHeandler() {
+        todolistAPI.getTasks(inputIDState)
+            .then((res) => {
+                setTasksState(res.data.items);
+            })
+    }
+
+    return <div>  
+                <span>{JSON.stringify(useState)}</span>
+                <input type="text" value={inputIDState} onChange={onChangeIDHeandler} placeholder = "Write id"/>
+                <button onClick={onClickHeandler}>Get tasks</button>
+                {tasksState ? tasksState.map( (item) => {
+                    return <span>{item.title}</span>
+                })
+                 : <span>Нет тасок</span> }
+            </div>
+}
+
+export const CreateTask = () => {
+    const [inputIDState, setInputIDState] = useState<string>('');
+    const [inputTaskTitleState, setInputTaskState] = useState<string>('');
+    const [infoState, setInfoState] = useState<'no info' | 'successfully' | 'error'>('no info')
+    function onChangeIDHeandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setInputIDState(event.currentTarget.value);
+    }
+    function onChangeTaskTitleHeandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setInputTaskState(event.currentTarget.value);
+    }
+    function onClickHeandler() {
+        todolistAPI.createTasks(inputIDState, inputTaskTitleState)
+            .then(() => {
+                setInfoState('successfully');
+            })
+            .catch(() => {
+                setInfoState('error');
+            })
+    }
+
+    return <div> 
+                <span>{infoState}</span>
+                <input type="text" value={inputIDState} onChange={onChangeIDHeandler} placeholder = "Write id"/>
+                <input type="text" value={inputTaskTitleState} onChange={onChangeTaskTitleHeandler} placeholder = "Write new task title"/>
+                <button onClick={onClickHeandler}>Create task</button>
             </div>
 }
 
