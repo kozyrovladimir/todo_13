@@ -1,9 +1,16 @@
+import { Dispatch } from 'react';
+import { DispatchProp } from 'react-redux';
 import { v1 } from 'uuid';
+import { todolistAPI } from '../api/todolist-api';
 import { FilterValuesType, TodolistType } from '../App';
 
 export type RemoveTodolistActionType = {
     type: 'REMOVE-TODOLIST',
     id: string
+}
+export type SetTodolistsActionType = {
+    type: 'SET-TODOLISTS',
+    todolists: Array<TodolistType>
 }
 export type AddTodolistActionType = {
     type: 'ADD-TODOLIST',
@@ -24,6 +31,7 @@ export type ChangeTodolistFilterActionType = {
 type ActionsType = RemoveTodolistActionType | AddTodolistActionType
     | ChangeTodolistTitleActionType
     | ChangeTodolistFilterActionType
+    | SetTodolistsActionType
 
 const initialState: Array<TodolistType> = []
 
@@ -55,6 +63,9 @@ export const todolistsReducer = (state: Array<TodolistType> = initialState, acti
             }
             return [...state]
         }
+        case 'SET-TODOLISTS': {
+            return [...action.todolists]
+        }
         default:
             return state;
     }
@@ -72,4 +83,42 @@ export const changeTodolistTitleAC = (id: string, title: string): ChangeTodolist
 export const changeTodolistFilterAC = (id: string, filter: FilterValuesType): ChangeTodolistFilterActionType => {
     return {type: 'CHANGE-TODOLIST-FILTER', id: id, filter: filter}
 }
+export const setTodolistsAC = (todolists: Array<TodolistType>): SetTodolistsActionType => {
+    return {type: 'SET-TODOLISTS', todolists}
+}
+
+// below is the function that made the request to the server
+
+// export function FetchTodolists(dispatch: any) {
+//     console.log('Fetch todolists');
+//     todolistAPI.getTodolists()
+//         .then( (tl) => {
+//             const TodolistsArray: Array<TodolistType> = tl.data.map( i => {
+//                 return {
+//                     id: i.id,
+//                     title: i.title,
+//                     filter: 'all'
+//                 }
+//             })
+//             dispatch(setTodolistsAC(TodolistsArray));
+//         })
+// }
+
+export function FetchTodolistsTC() {
+    return (dispatch: any) => {
+        console.log('Fetch todolists');
+        todolistAPI.getTodolists()
+            .then( (tl) => {
+                const TodolistsArray: Array<TodolistType> = tl.data.map( i => {
+                    return {
+                        id: i.id,
+                        title: i.title,
+                        filter: 'all'
+                    }
+                })
+                dispatch(setTodolistsAC(TodolistsArray));
+            })
+    }
+}
+
 
